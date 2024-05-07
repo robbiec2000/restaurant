@@ -34,3 +34,9 @@ export type CartItem = {
   optionTitle?:string;
   quantity: number;
 }
+
+export type Cart = {
+  products: CartItem[];
+  totalItems: number;
+  totalPrice: number;
+}

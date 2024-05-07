@@ -1,8 +1,9 @@
 "use client";
 
-
 import { Product } from "@/types/types";
+import { useCartStore } from "@/utils/store";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 type Props = {
   product: Product;
@@ -12,15 +13,31 @@ const Price = ({ product }: Props) => {
   const [total, setTotal] = useState(product.price);
   const [quantity, setQuantity] = useState(1);
   const [selected, setSelected] = useState(0);
+  const { add } = useCartStore();
 
   useEffect(() => {
-    if(product.options?.length){
-      setTotal(quantity * product.price + product.options[selected].additionalPrice);
-    }else{
+    if (product.options?.length) {
+      setTotal(
+        quantity * product.price + product.options[selected].additionalPrice
+      );
+    } else {
       setTotal(quantity * product.price);
     }
-    
   }, [quantity, selected, product]);
+
+  const handleAddCart = () => {
+    add({
+      id: product.id,
+      title: product.title,
+      img: product.img,
+      price: total,
+      ...(product.options?.length && {
+        optionTitle: product.options[selected].title,
+      }),
+      quantity: quantity,
+    });
+    toast.success("The product added to the cart");
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -62,7 +79,10 @@ const Price = ({ product }: Props) => {
           </div>
         </div>
         {/* CART BUTTON */}
-        <button className="uppercase w-56 bg-red-500 text-white p-3 ring-1 ring-red-500">
+        <button
+          onClick={handleAddCart}
+          className="uppercase w-56 bg-red-500 text-white p-3 ring-1 ring-red-500"
+        >
           Add to Cart
         </button>
       </div>
